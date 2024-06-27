@@ -21,10 +21,11 @@ hands = mp_hands.Hands()
 mp_drawing = mp.solutions.drawing_utils
 
 # Ouvrir la caméra virtuelle.
-cap = cv2.VideoCapture(0)  # Assurez-vous que la caméra virtuelle est configurée comme caméra par défaut.
+cap = cv2.VideoCapture(0)
 
 # Fuseau horaire français
 paris_tz = pytz.timezone('Europe/Paris')
+
 
 def calculate_angle(a, b, c):
     a = np.array(a)  # Premier point
@@ -39,6 +40,7 @@ def calculate_angle(a, b, c):
 
     return angle
 
+
 # Fonction pour enregistrer les données dans un fichier CSV
 def save_to_csv(data, filename='squat_history.csv'):
     file_exists = os.path.isfile(filename)
@@ -47,6 +49,7 @@ def save_to_csv(data, filename='squat_history.csv'):
         if not file_exists:
             writer.writerow(['Date', 'Squats', 'Duree', 'Calories Brulees'])
         writer.writerow(data)
+
 
 # Fonction pour lire les données du fichier CSV
 def read_csv(filename='squat_history.csv'):
@@ -59,9 +62,11 @@ def read_csv(filename='squat_history.csv'):
                 data.append(row)
     return data
 
+
 # Fonction pour générer un graphique
 def generate_graph(data, filename='squat_graph.png'):
-    timestamps = [datetime.strptime(row[0], "%Y-%m-%d %H:%M:%S").replace(tzinfo=pytz.utc).astimezone(paris_tz) for row in data]
+    timestamps = [datetime.strptime(row[0], "%Y-%m-%d %H:%M:%S").replace(tzinfo=pytz.utc).astimezone(paris_tz) for row
+                  in data]
     squats = [int(row[1]) for row in data]
     calories = [float(row[3]) for row in data]
 
@@ -85,12 +90,14 @@ def generate_graph(data, filename='squat_graph.png'):
     plt.savefig(filename)
     plt.close()
 
+
 # Fonction pour vérifier si une main est dans la zone de pause
 def is_hand_in_pause_zone(hand_landmarks, pause_zone):
     for landmark in hand_landmarks.landmark:
         if pause_zone[0] <= landmark.x <= pause_zone[2] and pause_zone[1] <= landmark.y <= pause_zone[3]:
             return True
     return False
+
 
 # Demander le poids de l'utilisateur.
 poids = float(input("Entrez votre poids en kilogrammes : "))
@@ -128,7 +135,8 @@ while cap.isOpened():
         break
 
     height, width, _ = frame.shape
-    x1, y1, x2, y2 = int(pause_zone[0] * width), int(pause_zone[1] * height), int(pause_zone[2] * width), int(pause_zone[3] * height)
+    x1, y1, x2, y2 = int(pause_zone[0] * width), int(pause_zone[1] * height), int(pause_zone[2] * width), int(
+        pause_zone[3] * height)
 
     # Convertir l'image en RGB.
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
